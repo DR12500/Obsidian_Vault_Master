@@ -1,0 +1,6 @@
+- [ ] Elhage et al., _Toy Models of Superposition_ (2022). Already cited in the exposé as `elhage2022toy`. [arXiv 2209.10652](https://arxiv.org/abs/2209.10652)
+	- Elhage et al. train small ReLU models on synthetic data, where each input dimension is a known "feature", to study how networks store more features than they have dimensions.
+	- When features are sparse, the models represent more features than they have neurons by assigning them non-orthogonal directions. This is called _superposition_, and it explains why single neurons are often polysemantic.
+	- Whether a feature is stored in superposition depends on its sparsity and importance. The transition between the two regimes behaves like a phase change.
+	- In superposition, features arrange themselves into geometric structures such as digons, triangles, pentagons and tetrahedra. This is an early example of geometry emerging inside a network.
+	- Prieto et al. ([arXiv 2603.09972](https://arxiv.org/abs/2603.09972), `prieto2026correlations` in the exposé) extend the picture: when features are correlated, as in real text, interference can be constructive instead of pure noise. This produces semantic clusters and circles like those found in LLMs.

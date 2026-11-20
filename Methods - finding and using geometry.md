@@ -1,0 +1,79 @@
+- [ ] Bhalla et al., _Do Sparse Autoencoders Capture Concept Manifolds?_ (2026). Dilution, the Ising discovery pipeline, and the synthetic manifold zoo. Start with the [blog post](https://www.goodfire.com/research/can-saes-capture-neural-geometry), then the [paper](https://arxiv.org/abs/2604.28119).
+	- [github](https://github.com/goodfire-ai/sae-manifold)
+	- The Linear Representation Hypothesis can be deemed as a generative model of neural network representations, th inverse of which leads to SAEs
+	- They ask: if representations of a concept exhibit structure outside the scope of LRH, do SAEs capture such manifolds? In particular, the mismatch between the assumptions made by SAEs and the underlying geometry of model activations does not by itself reject SAEs as valuable interpretations of model representations. If SAEs perform reconstruction well, then their activations must necessarily preserve the geometry of model representations. The key issue is therefore not whether the geometry is preserved, but whether it is organized in a useful and interpretable way.
+	- They make the following contributions:
+		- **Formalizing the Problem of Capturing Manifolds using SAEs.** 
+			- manifolds i.e., nonlinearly curved geometric structures with causal efficacy, exist in representations of a pretrained LLM
+			- capturing such manifolds via sparse coding
+			- show that  SAE can still satisfy its architectural constraints (e.g., sparsity), achieve good reconstruction, and yet capture the curved geometries underlying neural network representations by “tiling” the manifold with its features
+		- **Exhaustively Characterizing How SAEs Tile Manifolds.**
+			- The paper shows that "**low reconstruction error alone does not guarantee coherent manifold recovery**". An SAE can reconstruct data very well mathematically while still completely failing to form a coherent, global map of the underlying concept. This is noticeable in two different ways: Feature Splitting and Redundancy.
+				- **Feature Splitting:** Certain parts of a concept get chopped up into tiny, overly specific "buckets." Instead of one feature handling a range, you might have five features overlapping for tiny slices of the same concept.
+				- **Redundancy:** Meanwhile, other parts of the concept are over-represented by multiple features doing the exact same job.
+		- **Unsupervised Discovery of Manifold Structures.**
+			- mere correlation of feature directions, as used in prior work (Engels et al., 2024), need not suffice to find manifolds.
+			- atoms covering adjacent but non-overlapping regions of the manifold need not have similar decoder directions.
+			- compare five similarity measures for constructing feature affinity graphs: 
+				- (i) decoder cosine similarity, 
+				- (ii) conditional co-activation probability, 
+				- (iii) Pearson correlation of activation magnitudes, 
+				- (iv) pointwise mutual information, and 
+				- (v) Ising pairwise couplings.
+				-> Ising couplings and conditional co-activation yield the cleanest separation while decoder cosine similarity and Pearson correlation fail to recover the block structure, consistent with the observation that manifold membership is a functional property (which atoms co-activate) rather than a geometric one (where atoms point).
+	- uses Additive Mixture of Manifolds
+	- Definitions:
+		- **tiling**: localized features with overlapping support whose joint activity encodes position along the manifold
+			- **shattering**: where active sets across M are nearly disjoint and atoms partition the manifold
+			- dilution: where active sets overlap substaintially but no compact group of size <= k_i accounts for M
+	- Rather than identifying manifolds through geometric similarity of decoder directions, we can instead recover them as communities of atoms with strong pairwise interactions, irrespective of whether those interactions are cooperative or inhibitory. This perspective reframes manifold discovery as a problem of uncovering structured dependencies in feature activations.
+	- manifolds are encoded by collections of localized features whose joint activity captures the underlying geometry.
+	- only the group of features that tile a manifold as a whole carries geometric meaning. Interpretability in this regime thus requires reasoning about subspaces, not about individual dictionary elements. 
+	 -> for manifolds that an SAE tiles, the geometry is not visible in single, isolated features; it is carried by the **group** of features (a subspace). The paper claims this for tiled manifolds, not for concepts in general.
+	- 
+
+
+- [ ] Shafran et al., _From Directions to Regions_ (ICML 2026). The MFA alternative to SAEs, and one of the methods MAxBench evaluates. [arXiv 2602.02464](https://arxiv.org/abs/2602.02464)
+	- [github](https://github.com/ordavid-s/decomposing-activations-local-geometry)
+	-  Mixture of Factor Analyzer (MFA) as a scalable, unsupervised alternative that models the activation space as a collection of Gaussian regions with their local covariance structure. MFA decomposes activations into two compositional geometric objects: the region’s centroid in activation space, and the local variation from the centroid
+	- FA is a statistical method that models observed data with a small number of latent factors that explain correlations between variables. Unlike standard PCA, FA is a generative probabilistic model, which defines a likelihood for the data and explicitly models noise. Intuitively, the model assumes that most correlations among observed dimensions arise from a few underlying factors, while the remaining variation is dimension-specific independent noise. This yields a low-rank approximation that captures shared structure without requiring a full-covariance model. {...} MFA extends FA by allowing different regions of the representation space to express their own local geometry. Rather than a single FA modeling directions of global variation, MFA models the space as a collection of local low-dimensional Factor Analyzers
+
+- [ ] Wurgaft et al., _Manifold Steering Reveals the Shared Geometry of Neural Network Representation and Behavior_ (2026). The causal test; its spline method is also in MAxBench. [arXiv 2605.05115](https://arxiv.org/abs/2605.05115)
+	- [github](https://github.com/goodfire-ai/causalab/tree/manifold_steering)
+	- **Uncovering isometric geometries in neural network representation and behavior.**
+		- fit an activation manifold Mh to internal representations and a behavior manifold My to model outputs
+		- show the two geometries are tightly interlinked via a scaled isometry relation: geodesic distances on Mh align closely with those on My , and neither match Euclidean distances.
+	- **Validating the causal role of representation geometry.** 
+		- geometry-aware steering experiments and compare against the baseline of linear steering, showing linear steering cuts through low-density regions of behavior space and passes through unnatural intermediate distributions
+		- optimizing for paths along My recovers activation trajectories that trace the curvature of Mh
+	- **A theoretical framework for geometry-aware steering.**
+		- formulate steering as a problem of choosing the right geometry for activation space, rather than the right direction.  
+	- the circle in behavior space is a novel discovery, and results from sharply-peaked output distributions placing most mass on the target concept, with the remainder concentrated on its neighbors
+	- manifold steering produces smooth and ordered behavioral transitions: probability mass shifts steadily through adjacent values of a concept—from Monday to Tuesday to Wednesday to Thursday—while linear steering instead exhibits ‘teleportation’: mass jumps between non-adjacent concepts as the straight line cuts through the manifold’s interior.
+	- pullback activation paths follow the activation manifold Mh more closely than the linear steering path, and resemble the shape of the manifold steering paths
+	- **Flat Geometry:** Linear steering treats activation space as Euclidean: all directions and regions are equally valid, with Geodesics as straight lines ℓ(t) = (1−t) h0 + t h1. This geometry thus encodes no knowledge of naturally occurring activation or outputs.
+	- **The Density Geometry:** Manifold steering derives a geometry for activation space from naturally occurring internal representations.
+		- geometry induced from an energy function E(h) ∝ − log p(h) by rescaling the identity according to local density. 
+		- large where activations concentrate (on Mh) and small where they are sparse (off Mh).
+	- **The Pullback Geometry:** The steering path given by pullback derives geometric structure from naturally occurring model outputs.
+		- GF is the pullback of a chosen geometry on My through the Jacobian of the map from activation space to behavior space F : A → Y.
+		- Geodesics under GF are therefore activation paths whose induced behavioral trajectories are geodesics on My —exactly the pullback construction of §3.3.
+	- **We claim that while the metrics GE (Density) and GF (Pullback) are derived from different sources (internal activations and outputs, respectively), they converge on approximately the same paths in activation space (§3.3).** 
+		- This suggests the manifolds Mh and My are two images of the same conceptual geometry, related by an approximate Riemannian isometry.
+	- **Isometry results.** For each ICLR domain, we compute pairwise distance matrices over graph-node centroids under three metrics: Euclidean (linear) distance in the activation subspace, geodesic distance along the fitted activation manifold Mh, and geodesic distance along the behavior manifold My. 
+		- very high correlations between geodesic paths on the activation and behavior manifolds and reduced correlations for linear paths
+		- show an isometry between representations and behavior manifolds, i.e., distance between two points on the activation manifold Mh aligns with distance between the distributions induced by those points on the behavior manifold My. 
+		- show that steering representations along geodesics on Mh induces smooth, coherent transitions in behavior that follow geodesics on My. 
+		- show that optimizing interventions to produce behaviors following geodesics on My recover trajectories in activation space that follow Mh. 
+		- establish a causal bridge between representation and behavior that reveals shared structure reflecting underlying conceptual geometry.
+	- **Future Work:**
+		- _Expanding experimental validation to more complex domains._
+			- [refusals](https://arxiv.org/abs/2406.11717)
+			- [sycophancy](https://arxiv.org/abs/2509.21305) 
+			- [persuasion](https://arxiv.org/abs/2601.05050)
+		- _Moving from token to sequence-level outputs._
+			- The obvious way to expand from our work’s token-level focus to sequence-level focus involves formalizing arguments in the language of “beliefs”, i.e., latent variables underlying the posterior predictive induced by a model in response to an input ([Bigelow et al., 2023](https://arxiv.org/abs/2310.17639), [2025](https://arxiv.org/abs/2511.00617); [Wurgaft et al., 2025](https://arxiv.org/abs/2506.17859))
+		- _Fitting the geometry._
+			-  rich literature on fitting low-dimensional manifolds ([Coifman & Lafon, 2006](https://www.math.pku.edu.cn/teachers/yaoy/Fall2011/Lafon06.pdf); [Brand, 2002](https://proceedings.neurips.cc/paper/2002/file/8929c70f8d710e412d38da624b21c3c8-Paper.pdf); [Schölkopf et al., 1997](https://www.mlpack.org/papers/kpca.pdf); [Roweis & Saul, 2000](https://www.science.org/doi/10.1126/science.290.5500.2323); [Jones, 2024](https://arxiv.org/abs/2405.10858); [Jones & Lanners, 2026](https://arxiv.org/abs/2405.10858); [Meilă & Zhang, 2023](https://www.annualreviews.org/content/journals/10.1146/annurev-statistics-040522-115238))
+		- _Manipulating intermediate algorithmic variables._ 
+		- **Claude recommendation:** **[[unsupervised manifold steering]]**

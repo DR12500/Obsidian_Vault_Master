@@ -1,0 +1,73 @@
+- [ ] Karkada et al., _Symmetry in Language Statistics Shapes the Geometry of Model Representations_ (2026). The data explanation. [arXiv 2602.15029](https://arxiv.org/abs/2602.15029)
+	- **Introduction**
+		- first examine word embedding models, where representation learning is driven exclusively by pairwise co-occurrence statistics. Surprisingly, we find that each of these geometries arises in this simple setting. We develop a mathematical theory that unifies and explains these seemingly disparate observations, deriving the representation geometries from translation symmetry in the pairwise co-occurrence statistics of words. For example, when the co-occurrence probability of two events or places depends only on their temporal or spatial distance, these models spontaneously learn Fourier representations, i.e., the embedding vectors vary sinusoidally along each principal component.
+		- **concrete contributions are**:
+			- Empirical observations of representation manifolds and linear coordinate decoding in shallow word embedding models (e.g., word2vec).
+			- Empirical evidence that words embodying a continuous latent concept have pairwise co-occurrence statistics that exhibit translation symmetry.
+			- Analytical expressions that predict the representational geometry directly from these translation symmetric statistics.
+			- Empirical validation that the predicted representational structure is present, stable, and interpretable in both word embedding models and deep transformer-based models.
+			- Theoretical analysis that predicts how the error in the linear coordinate decoding task scales with the probe dimension and empirical validation.
+			- Empirical evidence that representation manifolds are robust to significant perturbations in their co-occurrence statistics even at intermediate embedding dimension.
+			- A continuous latent variable model that explains this surprising observation, showing that the emergence of representational geometric structure is a collective phenomenon involving many words.
+	- **Discussion**
+		- We emphasize that the foundation of our theory lies in the low-order correlational statistics of the training data. We prove our results in word embedding models, where closed-form training dynamics enable us to explicitly bridge the data statistics to the learned representations, but we find that these predictions carry over to a diverse set of larger sequence models. This suggests that the geometric structure of internal model representations is largely governed by task-agnostic and architecture-agnostic principles. Several recent works give evidence for this idea, including [Shai et al. (2024)](https://arxiv.org/pdf/2602.15029#cite.shai2024transformers); [Prieto et al. (2026)](https://arxiv.org/pdf/2602.15029#cite.prieto2026data); [Shai et al. (2026)](https://arxiv.org/pdf/2602.15029#cite.shai2026transformers).
+		- It may be useful to decompose model interpretability into two closely-related research programs: one which sharply predicts how representational geometry and computational primitives arise as a result of optimization pressures (as in this work), and one which describes how these pieces interconnect within the model to produce intelligent behavior.
+	- **Limitations**
+		- _word ambiguity:_ if a prompt containing “May” provides disambiguating context, the representations of months become increasingly circular as they propagate through the forward pass. Building a theory to explain such phenomena would be very interesting.
+
+- [ ] Prieto et al., _From Data Statistics to Feature Geometry: How Correlations Shape Superposition_ (ICLR 2026) _(skim)_. The same argument from the superposition angle. [arXiv 2603.09972](https://arxiv.org/abs/2603.09972)
+	- [GitHub](https://github.com/LucasPrietoAl/correlations-feature-geometry)
+	- introcudes Bag-of-Words Superposition (BOWS): framework in which an autoencoder is trained to encode binary bag-of-words representations of internet text in superposition.
+	- Our main contributions are as follows:
+		- We introduce BOWS as a controlled setting to study superposition with realistic features.
+		- We show that, when features are correlated, interference can be constructive rather than only acting as noise, and formalize a regime of linear superposition in which this constructive interference is leveraged by non-linear AEs to enable efficient reconstruction in terms of weight norm and rank.
+		- We show that these solutions emerge prominently under tight bottlenecks or weight decay, and that they reproduce key geometric structures observed in real language models, including semantic clusters and cyclical structure.
+		- We introduce the distinction between presence-coding and value-coding features to explain the existence of structured representations in the absence of feature correlations.
+	- It covers two types of superposition based on what kind of decoder is required to read it back out: 
+		- **Linear Superposition:** A feature is in linear superposition if it is packed tightly with other features, but can still be successfully and accurately decoded using a **purely linear transformation**
+		- **Non-Linear Superposition:** A feature is in non-linear superposition if a linear decoder fails or is insufficient, meaning you **must use a non-linear decoder** (or a non-linear operation, like a thresholding ReLU function) to successfully filter out the interference and recover the feature.
+	- The paper shows the circle is already visible in PCA of the raw word data, and the trained model inherits it.
+	- - **Presence-coding:** a feature detects whether something is there (e.g. “this token is _cat_”). Any geometry between such features depends on correlations in the data plus limited capacity.
+	- **Value-coding:** a real-valued quantity (an angle, a coordinate) is linearly decodable. The resulting geometry, e.g. circles in modular addition or a map of cities, appears even with completely uncorrelated inputs, because the model needs those values to compute.
+	- _Architecture and training:_ the structure appears mainly under tight bottlenecks or weight decay, so training choices decide whether it shows up.
+	- _Analysis method:_ you need to know which of the two mechanisms you’re looking at before interpreting a shape.
+	- BOWS doesn’t capture the full richness of language model representations. it is a mechanism that _can_ produce geometry, not a proof of what LLMs do.
+	- **Related Work:**
+		- [Li et al. (2025)](https://www.mdpi.com/1099-4300/27/4/344) showed that language models represent integers in a helix structure to perform modular addition echoing the results from [Nanda et al. (2023)](https://openreview.net/forum?id=9XFSbDPmdW) and [Liu et al. (2022)](https://openreview.net/forum?id=6at6rB3IZm) on transformers trained for modular addition.
+- [ ] Modell et al., _The Origins of Representation Manifolds in LLMs_ (2025) _(optional, more theory)_. [arXiv 2505.18235](https://arxiv.org/abs/2505.18235)
+	- **Introduction:**
+		- There is overwhelming empirical evidence that neural networks represent complex features in structures which unfold across multiple directions in potentially continuous, nonlinear ways:
+			- examples of curves ([1](https://aclanthology.org/2023.eacl-main.58/), [2](https://doi.org/10.18653/v1/2022.emnlp-main.9))
+			-  [swiss-roll-like manifolds](https://openreview.net/forum?id=xYGNO86OWDH)
+			- loops ([1](https://openreview.net/forum?id=d63a4AM4hb) , [2](https://livgorton.com/curve-detector-manifolds/))
+			- [tori](https://doi.org/10.18653/v1/2022.emnlp-main.9)
+			- [hierarchical trees](https://arxiv.org/abs/2406.01506)
+			- topologically circular representations of numbers in toy models trained to perform modular arithmetic ([1](https://arxiv.org/abs/2306.17844), [2](https://arxiv.org/abs/2406.02550), [3](https://openreview.net/forum?id=9XFSbDPmdW), [4](https://arxiv.org/abs/2210.01123))
+			- [simulated angular data](https://transformer-circuits.pub/2023/may-update/index.html#feature-manifolds)
+			- [fractal geometry in simulated hidden Markov models](http://papers.nips.cc/paper_files/paper/2024/hash/8936fa1691764912d9519e1b5673ea66-Abstract-Conference.html)
+			- [broader phenomenology from local finite-state-automata](https://transformer-circuits.pub/2023/monosemantic-features/index.html)
+			-  [spatial ‘brain-like’ modularity](https://arxiv.org/abs/2410.19750)
+			- [behaviours, such as deception](https://transformer-circuits.pub/2024/scaling-monosemanticity/)
+			- We provide what we believe is a minimum viable mathematical theory to do this. Our most substantial, novel result establishes that under plausible hypotheses, cosine similarity in representation space encodes the intrinsic geometry of a feature through shortest, on-manifold paths. We develop this insight using concepts from metric geometry – the theory of length and shape in metric spaces ([Burago et al., 2001](https://pubs.ams.org/ebooks/gsm/033)). The widespread use of cosine similarity across data science could suggest many other applications for this result.
+	- **Continuous correspondence hypothesis**
+		- there are 3 different categories for a feature:
+			1. Atomic features: Z_f is a singleton set.
+			2. Hierarchical features: Z_f is a discrete set, d_f a tree distance.
+			3. Continuous features: Z_f an interval (equipped with e.g. df(x, y) = |x − y|), a circle (equipped with e.g. arc-length distance), multi-dimensional (equipped with e.g. the Euclidean distance), etc.
+		- The hypothesis is this one: The features zf(x) and representation directions vf(x) are in a continuous, one-to-one correspondence. Formally, there is a continuous invertible map from the metric space into the hypersphere, ϕf : Zf → SD−1, with image Mf := ϕ(Z), such that vf(x) = ϕf(zf(x)) for all x ∈ X .
+		- Given what we see, our innate understanding of these concepts, and Proposition 1 (**_not mentioned in the notes here_**), we might conjecture that, allowing for error of different kinds, the shapes are homeomorphic to the following metric spaces:
+			- colour: Zcolour = [0, 2π), dcolour(x, y) = min(|x − y|, 2π − |x − y|), these angles corresponding to hues 0: red, ..., π/3: blue, ..., 2π/3: yellow. (Copied correctly from the paper, but it differs from the usual hue wheel, where yellow is at π/3 and blue at 4π/3.)
+			- years: Zyears = [1900, 1999], dyear(x, y) = |x − y|
+			- dates: Zdates = [0, 365), ddates(x, y) = min(|x − y|, 365 − |x − y|)
+		- With the question: "Why might it be advantageous for a language model to embed a concept in a larger dimension than its intrinsic topology seems to require?" They answer it with an argument about computation: layers are linked by linear operations, so a curve through a higher-dimensional subspace lets linear maps compute more (e.g., polynomials of the feature value). (The **superposition hypothesis** is only referred to as an existing explanation, citing Elhage et al. 2021/2022; they do not introduce it.)
+		- "We suspect this idea that feature manifolds many be embedded in more complex ways than their topology suggests, in order to achieve a given distance metric, may actually be quite deep and important." - [Olah and Batson (2024)](https://transformer-circuits.pub/2023/may-update/index.html#feature-manifolds)
+		- If we accept there is a correspondence between features and their representations (Hypothesis 1), arguably the next most basic question we can ask is whether cosine similarity in representation space somehow tells us about distance between the corresponding feature values.
+		- If we accept there is a correspondence between features and their representations (Hypothesis 1), arguably the next most basic question we can ask is whether cosine similarity in representation space somehow tells us about distance between the corresponding feature values. {...} -> With this, Hypothesis 2 (cosine similarity reflects distance) gets introduced. 
+
+		- Strengthening just Hypothesis 1 to both Hypotheses 1 and 2 has formidable consequences: there is an intrinsic sense in which a feature and its representation are geometrically indistinguishable. This statement is made precise in Theorem 1.
+	- **Discussion:**
+		- By modeling features as metric spaces, we are able to accurately characterise the topological and geometric properties of their representations under some basic hypotheses. {...} which validate our theory and provide a nuanced, quantitative view of the correspondence between human concepts and their representation at different levels of geometric fidelity, namely **homeomorphism** and **isometry**.
+		- **Limitations:**
+			- hypothesis-driven
+			- not scalable
+			- difficulty of estimating manifolds in the presence of noise

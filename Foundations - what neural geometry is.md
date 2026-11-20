@@ -1,0 +1,40 @@
+## Goodfire
+- [ ] Goodfire, _The World Inside Neural Networks_ (2026). The overview your supervisor pointed you to; re-read it as the frame for everything below. [Link](https://www.goodfire.com/research/the-world-inside-neural-networks)
+- **section 1:** example
+	- The embedding vectors form an obvious string-like structure, where nearby positions along the string correspond to images with the car in nearby positions. {...} To test this hypothesis, we perform "brain surgery" on the model to see if changing the position on the piece of string causes the predicted image to change the position of the car. First, we fit a one-dimensional manifold (a smooth curve) to describe the piece of string. Then, we intervene on the hidden activations to "steer" the representation along the manifold. The result validates our hypothesis; the car moves smoothly up and down the hill!
+	- Even when a model has learned a scalar concept like position, that concept may live on a curved manifold rather than along a straight line in activation space. By following the geometry, we can intervene in ways that are precise and effective; by ignoring it, we risk pushing the model into unnatural and incoherent states. To understand and control neural networks, we need tools that respect the shape of their internal representations.
+- **section 2:** _representations_, _computations_, and _behavior_
+	- the power of neural geometry lies in its ability to help us precisely understand and manipulate three levels of structure in neural networks: _representations_, _computations_, and _behavior_.
+	- {...} geometric structures are the data structures of neural networks and therefore necessary to fill out the picture. {...} If we fully understood both representation and computation, then we could know exactly when models will fail, debug them if they do, evaluate and audit them with confidence, reshape their training, and generally build them with less mystery and more engineering. Understanding neural geometry is on the critical path to this ambitious vision.
+- **section 3:** Where does neural geometry come from?
+	- structure leaves statistical traces in text: nearby months tend to appear in similar contexts.
+- **section 4:** SAE
+	- SAEs are valuable tools despite their limitations, particularly in their ability to break down a model into features at scale in an unsupervised way. But in order to more deeply and precisely understand and control neural networks, we'll need new methods — supervised and unsupervised — that respect neural geometry.
+
+## Engels
+- [ ] Engels et al., _Not All Language Model Features Are One-Dimensionally Linear_ (ICLR 2025). The original day/month circles, and the SAE-clustering method later work builds on. [arXiv 2405.14860](https://arxiv.org/abs/2405.14860)
+- **Related work:**
+	- Multi-dim. representations:
+		- . [Shai et al. (2024)](https://www.alignmentforum.org/posts/gTZ2SxesbHckJ3CkF/transformers-represent-belief-state-geometry-in-their) predict and verify that a transformer trained on a hidden Markov model uses a fractal structure to represent the probability of each next token, a clear example of a necessary multi-dimensional feature, but the analysis is restricted to a toy setting. 
+		-  Yedidia (2023[a](https://www.lesswrong.com/posts/qvWP3aBDBaqXvPNhS/gpt-2-s-positional-embedding-matrix-is-a-helix);[b](https://www.lesswrong.com/posts/zRA8B2FJLtTYRgie6/the-positional-embedding-matrix-and-previous-token-heads-how)) finds that GPT-2 learned position vectors form a helix, which implies a circle when “viewed” from below.
+		- Another suggestive result, due to [Hanna et al. (2024)](https://arxiv.org/abs/2305.00586), is the presence of a U-shape in the representation of numbers between 0 and 100; however, Hanna et al. (2024) find that this representation is not causal, and they only show it exists within a specific prompt distribution.
+		-  [Black et al. (2022)](https://arxiv.org/abs/2211.12312) argue for interpreting neural networks through the polytopes they split the input space into, and identifies regions of low polytope density as “valid” regions for a potential linear representation.
+	- **Circuits:** 
+		- the base units that form a circuit can be layers, neurons or SAEs
+	- **Modular arithmetic:**
+		- models that generalize well have circular representations for a and b (if a + b = c mod m).
+- **Definitions  (not shown here, since we are in markdown):**
+	- for Feature(s)
+	- for an updated supoerposition hypothesis
+		- (_One_-dim.): Hidden states xi,l are the sum of many (≫ d) sparse one-dimensional features fi and pairwise δ-orthogonal vectors vi
+		- (_Multi_-dim.): Hidden states xi,l are the sum of many (≫ d) sparse low-dimensional irreducible features fi and pairwise δ-orthogonal matrices Vi
+- **SAEs find multi-dim. features:**
+	- SAEs) deconstruct model hidden states into sparse vector sums from an over-complete basis
+	-  argue that SAEs can discover irreducible multi-dimensional features by clustering
+	- {...} by proving that dictionary elements have a high cosine similarity the edges between them will not be pruned away during the clustering process; hence, they will be in a cluster. Thus, we have a way to operationalize **Hypothesis 2:** clustering D finds T -orthogonal subspaces, and if irreducible multi-dimensional features exist, they are likely to be equal to some of these subspaces. 
+- **Circular Representations in LLMs:**
+	- CONTINUITY OF CIRCULAR REPRESENTATIONS
+		- Mistral 7B indeed can map intermediate quantities to their expected place in the circle: the very early and very late version of each weekday are more towards the last and the next weekday along the circle, respectively.
+- **Discussion:**
+	- we think our work raises interesting questions about whether individual SAE features are appropriate “[mediators](https://arxiv.org/pdf/2408.01416)”
+	- **Limitations:** It is unclear why we did not find more interpretable multi-dimensional features. We are unsure if we are failing to interpret some of the high-scoring multi-dimensional features, if most multi-dimensional features lie in dimensions higher than two, if our clustering technique is not powerful enough to find some features, or if there are truly not that many.
