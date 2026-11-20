@@ -5,3 +5,5 @@
 .trash/
 .DS_Store
 Thumbs.db
+
+# Sync script log lives outside the vault (C:\Users\User\Scripts)
