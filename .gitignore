@@ -7,3 +7,8 @@
 Thumbs.db
 
 # Sync script log lives outside the vault (C:\Users\User\Scripts)
+
+# Per-device display settings (each PC keeps its own)
+.obsidian/appearance.json
+.obsidian/core-plugins.json
+.obsidian/graph.json
